@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React from 'react';
 import { FileText, Plus, BarChart3, Settings, List } from 'lucide-react';
 
@@ -37,6 +38,17 @@ const MyClaimsPage = () => {
           </div>
         </div>
       </nav>
+=======
+import React, { useState } from 'react';
+import Header from './Header';
+import { FileText, Plus, BarChart3 } from 'lucide-react';
+
+const MyClaimsPage = () => {
+  const [currentPage, setCurrentPage] = useState('myclaims');
+  return (
+    <div className="min-h-screen bg-gray-50 text-gray-800 font-sans">
+      <Header currentPage={currentPage} />
+>>>>>>> 024cb20 (feat: setup of auth and database)
 
       {/* Main Content */}
       <main className="flex items-center justify-center py-12 px-6">

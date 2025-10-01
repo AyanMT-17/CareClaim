@@ -1,8 +1,16 @@
 import React, { useState, useMemo } from 'react';
+<<<<<<< HEAD
+=======
+import Header from './Header';
+>>>>>>> 024cb20 (feat: setup of auth and database)
 import { Search, ChevronDown, FileText, CheckCircle, Clock, DollarSign } from 'lucide-react';
 
 // Main Dashboard Component
 const Dashboard = () => {
+<<<<<<< HEAD
+=======
+  const [currentPage, setCurrentPage] = useState('dashboard');
+>>>>>>> 024cb20 (feat: setup of auth and database)
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('All Status');
 
@@ -56,6 +64,7 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans">
+<<<<<<< HEAD
       {/* Navigation Bar */}
       <nav className="sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-gray-200 px-6 py-3">
         <div className="flex items-center justify-between">
@@ -86,6 +95,9 @@ const Dashboard = () => {
           </div>
         </div>
       </nav>
+=======
+      <Header currentPage={currentPage} />
+>>>>>>> 024cb20 (feat: setup of auth and database)
 
       {/* Main Content */}
       <main className="px-6 md:px-8 py-10">

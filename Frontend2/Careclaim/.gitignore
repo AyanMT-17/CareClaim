@@ -11,7 +11,11 @@ node_modules
 dist
 dist-ssr
 *.local
+<<<<<<< HEAD
 
+=======
+.env
+>>>>>>> 024cb20 (feat: setup of auth and database)
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

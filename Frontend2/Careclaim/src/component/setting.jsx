@@ -1,7 +1,16 @@
+<<<<<<< HEAD
 import React from 'react';
 import { User, Bell, Shield, CreditCard, Settings, FileText, BarChart3, List, Plus } from 'lucide-react';
 
 const SettingsPage = () => {
+=======
+import React, { useState } from 'react';
+import Header from './Header';
+import { User, Bell, Shield, CreditCard, Settings, BarChart3 } from 'lucide-react';
+
+const SettingsPage = () => {
+  const [currentPage, setCurrentPage] = useState('settings');
+>>>>>>> 024cb20 (feat: setup of auth and database)
   const settingsCards = [
     { title: 'Profile Settings', description: 'Manage your personal information and preferences', icon: User, color: 'slate' },
     { title: 'Notifications', description: 'Configure email and push notification preferences', icon: Bell, color: 'green' },
@@ -19,6 +28,7 @@ const SettingsPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans">
+<<<<<<< HEAD
       {/* Navigation Bar */}
       <nav className="sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-gray-200 px-6 py-3">
         <div className="flex items-center justify-between">
@@ -56,6 +66,9 @@ const SettingsPage = () => {
           </div>
         </div>
       </nav>
+=======
+      <Header currentPage={currentPage} />
+>>>>>>> 024cb20 (feat: setup of auth and database)
 
       {/* Main Content */}
       <main className="px-6 md:px-8 py-10">
