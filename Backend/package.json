@@ -4,21 +4,15 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-<<<<<<< HEAD
+    "start": "node index.js",
+    "dev": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
-=======
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon index.js"
->>>>>>> 024cb20 (feat: setup of auth and database)
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "module",
   "dependencies": {
-<<<<<<< HEAD
-    "express": "^5.1.0"
-=======
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
@@ -28,6 +22,8 @@
     "mongoose": "^8.18.3",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0"
->>>>>>> 024cb20 (feat: setup of auth and database)
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
   }
 }

@@ -1,15 +1,9 @@
 import React, { useState } from 'react';
-<<<<<<< HEAD
-import { User, FileText, Shield, Upload, CheckCircle, ChevronLeft, ChevronRight, BarChart3, List, Plus } from 'lucide-react';
-
-const SubmitClaimPage = () => {
-=======
 import Header from './Header';
 import { User, FileText, Shield, Upload, CheckCircle, ChevronLeft, ChevronRight } from 'lucide-react';
 
 const SubmitClaimPage = () => {
   const [currentPage, setCurrentPage] = useState('newclaim');
->>>>>>> 024cb20 (feat: setup of auth and database)
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState({
     patientFullName: '',
@@ -52,43 +46,7 @@ const SubmitClaimPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans">
-<<<<<<< HEAD
-      {/* Navigation Bar */}
-      <nav className="sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-gray-200 px-6 py-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-8">
-            <div className="flex items-center space-x-3">
-              <div className="w-9 h-9 bg-slate-800 rounded-lg flex items-center justify-center shadow-inner shadow-slate-900/20">
-                <span className="text-white font-bold text-lg">C</span>
-              </div>
-              <span className="text-2xl font-semibold text-gray-900">CareClaim</span>
-            </div>
-            <div className="hidden md:flex items-center space-x-2">
-              <button className="flex items-center space-x-2 text-gray-500 hover:text-gray-900 hover:bg-gray-100 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                <BarChart3 className="w-4 h-4" />
-                <span>Dashboard</span>
-              </button>
-              <button className="flex items-center space-x-2 bg-gray-100 text-gray-900 px-4 py-2 rounded-lg text-sm font-semibold transition-colors">
-                <Plus className="w-4 h-4" />
-                <span>Submit Claim</span>
-              </button>
-              <button className="flex items-center space-x-2 text-gray-500 hover:text-gray-900 hover:bg-gray-100 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                <List className="w-4 h-4" />
-                <span>My Claims</span>
-              </button>
-            </div>
-          </div>
-          <div className="flex items-center space-x-3">
-            <div className="w-9 h-9 bg-gray-700 rounded-full flex items-center justify-center ring-2 ring-gray-200">
-              <span className="text-white text-sm font-medium">JD</span>
-            </div>
-            <span className="text-gray-800 hidden sm:inline font-medium">John Doe</span>
-          </div>
-        </div>
-      </nav>
-=======
       <Header currentPage={currentPage} />
->>>>>>> 024cb20 (feat: setup of auth and database)
 
       {/* Main Content */}
       <main className="px-6 md:px-8 py-10">
