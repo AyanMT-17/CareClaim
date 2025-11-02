@@ -15,7 +15,7 @@ dotenv.config();
 
 const app = express();
 connectDB();
-const port = 5000;
+const port = 8000;
 
 app.use(passport.initialize());
 

@@ -28,7 +28,7 @@ const LoginPage = ({ handleLogin }) => {
   const navigate = useNavigate();
   // Define the base URL for your backend API
   // You should move this to a .env file for production
-  const BACKEND_URL = "http://localhost:5000";
+  const BACKEND_URL = "http://localhost:8000";
 
   // Check if user is already authenticated when component mounts
   useEffect(() => {

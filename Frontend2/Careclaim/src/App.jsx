@@ -20,7 +20,7 @@ function App() {
   useEffect(() => {
     const checkAuthStatus = async () => {
       try {
-        const response = await fetch('http://localhost:5000/profile', {
+        const response = await fetch('http://localhost:8000/profile', {
           credentials: 'include'
         });
         
@@ -46,7 +46,7 @@ function App() {
   // Function to be called on logout
   const handleLogout = async () => {
     try {
-      await fetch('http://localhost:5000/auth/logout', {
+      await fetch('http://localhost:8000/auth/logout', {
         method: 'GET',
         credentials: 'include'
       });
