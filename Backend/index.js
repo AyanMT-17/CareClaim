@@ -1,5 +1,14 @@
-import express from 'express';
 import dotenv from 'dotenv';
+
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+dotenv.config({ path: "./backend/.env" });
+
+import express from 'express';
 import connectDB from './config/db.js';
 import passport from './services/passport.js';
 import session from 'express-session';
@@ -8,10 +17,6 @@ import cookieParser from 'cookie-parser';
 import authrout from './routes/auth.js';
 import cors from 'cors';
 
-
-
-
-dotenv.config();
 
 const app = express();
 connectDB();
