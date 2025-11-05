@@ -33,7 +33,7 @@ router.get(
     });
 
     // Redirect to frontend
-    res.redirect("http://localhost:5173/");
+    res.redirect(`${process.env.Frontend_URL}`);
   }
 );
 

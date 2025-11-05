@@ -1,38 +1,131 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Header from './Header';
-import { Search, ChevronDown, FileText, CheckCircle, Clock, DollarSign } from 'lucide-react';
+import { Search, ChevronDown, FileText, CheckCircle, Clock, DollarSign, AlertCircle } from 'lucide-react';
 
 // Main Dashboard Component
 const Dashboard = () => {
   const [currentPage, setCurrentPage] = useState('dashboard');
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('All Status');
+  const [claims, setClaims] = useState([]);
+  const [policies, setPolicies] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
-  // --- Data ---
-  const stats = [
-    { title: 'Total Claims', value: '1,247', change: '+12%', changeType: 'positive', icon: FileText, color: 'slate' },
-    { title: 'Approved Claims', value: '1,089', change: '+8%', changeType: 'positive', icon: CheckCircle, color: 'green' },
-    { title: 'Pending Review', value: '127', change: '-5%', changeType: 'negative', icon: Clock, color: 'slate' },
-    { title: 'Total Value', value: '$2.4M', change: '+15%', changeType: 'positive', icon: DollarSign, color: 'green' }
-  ];
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Fetch claims
+        const claimsResponse = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/claims`, {
+          credentials: 'include',
+          headers: { 'Accept': 'application/json' }
+        });
+        const claimsData = await claimsResponse.json();
+        
+        // Fetch policies
+        const policiesResponse = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/policies`, {
+          credentials: 'include',
+          headers: { 'Accept': 'application/json' }
+        });
+        const policiesData = await policiesResponse.json();
 
-  const claims = [
-    { id: 'CLM-2024-005', patient: 'Robert Wilson', provider: 'Specialist Center', date: '1/25/2024', amount: '$1,580.75', status: 'Processing', type: 'Diagnostic' },
-    { id: 'CLM-2024-004', patient: 'Emily Chen', provider: 'Family Health Care', date: '1/22/2024', amount: '$320', status: 'Rejected', type: 'Consultation' },
-    { id: 'CLM-2024-003', patient: 'Michael Davis', provider: 'Metro Hospital', date: '1/20/2024', amount: '$5,200', status: 'Under Review', type: 'Surgery' },
-    { id: 'CLM-2024-002', patient: 'Sarah Johnson', provider: 'Downtown Clinic', date: '1/18/2024', amount: '$890.50', status: 'Pending', type: 'Emergency' },
-    { id: 'CLM-2024-001', patient: 'John Smith', provider: 'City Medical Center', date: '1/15/2024', amount: '$2,450', status: 'Approved', type: 'Outpatient' }
-  ];
+        if (claimsResponse.ok && policiesResponse.ok) {
+          setClaims(claimsData?.ok ? claimsData.items : []);
+          setPolicies(policiesData?.ok ? policiesData.items : []);
+          if (!claimsData?.ok || !policiesData?.ok) {
+            console.warn('API returned ok:false -', claimsData?.error || policiesData?.error);
+          }
+        } else {
+          setError('Failed to fetch data: ' + (claimsData?.error || policiesData?.error || 'Unknown error'));
+        }
+        
+        // Debug log
+        console.log('Claims data:', claimsData);
+        console.log('Policies data:', policiesData);
+      } catch (err) {
+        console.error('Fetch error:', err);
+        setError('Failed to fetch data');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  // Calculate stats from real data
+  const stats = useMemo(() => {
+    const totalClaims = claims.length;
+    const approvedClaims = claims.filter(c => c.status === 'Approved').length;
+    const pendingClaims = claims.filter(c => ['Draft', 'Submitted', 'InReview'].includes(c.status)).length;
+    const totalValue = claims.reduce((sum, claim) => sum + (claim.incident?.amountClaimed || 0), 0);
+
+    return [
+      { 
+        title: 'Total Claims', 
+        value: totalClaims.toString(), 
+        change: `${policies.length} Policies`, 
+        changeType: 'positive', 
+        icon: FileText, 
+        color: 'slate' 
+      },
+      { 
+        title: 'Approved Claims', 
+        value: approvedClaims.toString(), 
+        change: `${((approvedClaims/totalClaims)*100 || 0).toFixed(0)}%`, 
+        changeType: 'positive', 
+        icon: CheckCircle, 
+        color: 'green' 
+      },
+      { 
+        title: 'Pending Review', 
+        value: pendingClaims.toString(), 
+        change: `${((pendingClaims/totalClaims)*100 || 0).toFixed(0)}%`, 
+        changeType: pendingClaims ? 'negative' : 'positive', 
+        icon: Clock, 
+        color: 'slate' 
+      },
+      { 
+        title: 'Total Value', 
+        value: totalValue.toLocaleString('en-US', {
+          style: 'currency',
+          currency: 'USD',
+          maximumFractionDigits: 0
+        }), 
+        change: `${policies.length} Active`, 
+        changeType: 'positive', 
+        icon: DollarSign, 
+        color: 'green' 
+      }
+    ];
+  }, [claims, policies]);
 
   // --- Filtering Logic ---
   const filteredClaims = useMemo(() => {
     return claims.filter(claim => {
+      // Status filter
       const statusMatch = statusFilter === 'All Status' || claim.status === statusFilter;
       if (!statusMatch) return false;
-      const searchMatch = Object.values(claim).some(val =>
-        String(val).toLowerCase().includes(searchTerm.toLowerCase())
+      
+      // Search filter - search through nested objects too
+      if (!searchTerm) return true;
+      
+      const searchLower = searchTerm.toLowerCase();
+      const searchFields = {
+        id: claim._id,
+        userId: claim.userId,
+        status: claim.status,
+        provider: claim.incident?.provider,
+        type: claim.incident?.type,
+        details: claim.incident?.details,
+        amount: claim.incident?.amountClaimed?.toString()
+      };
+      
+      return Object.values(searchFields).some(val => 
+        val && String(val).toLowerCase().includes(searchLower)
       );
-      return searchMatch;
     });
   }, [claims, searchTerm, statusFilter]);
 
@@ -67,8 +160,28 @@ const Dashboard = () => {
           <p className="text-gray-500 text-lg">Overview of your claims and recent activity.</p>
         </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+        {/* Loading and Error States */}
+      {loading && (
+        <div className="text-center py-10">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-slate-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading dashboard data...</p>
+        </div>
+      )}
+
+      {error && (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+          <div className="flex items-center">
+            <AlertCircle className="w-5 h-5 text-red-500 mr-2" />
+            <p className="text-red-600">{error}</p>
+          </div>
+        </div>
+      )}
+
+      {/* Content when data is loaded */}
+      {!loading && !error && (
+        <>
+          {/* Stats Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
           {stats.map((stat) => {
             const Icon = stat.icon;
             const styles = getStatStyles(stat.color);
@@ -134,24 +247,31 @@ const Dashboard = () => {
               </thead>
               <tbody>
                 {filteredClaims.map((claim, index) => (
-                  <tr key={claim.id} className={`border-b border-gray-200/50 transition-colors ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'} hover:bg-gray-100`}>
-                    <td className="py-4 px-6 text-slate-600 font-medium">{claim.id}</td>
-                    <td className="py-4 px-6 text-gray-800">{claim.patient}</td>
-                    <td className="py-4 px-6 text-gray-600">{claim.provider}</td>
-                    <td className="py-4 px-6 text-gray-600">{claim.date}</td>
-                    <td className="py-4 px-6 text-gray-800 font-medium">{claim.amount}</td>
+                  <tr key={claim._id} className={`border-b border-gray-200/50 transition-colors ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'} hover:bg-gray-100`} onClick={() => navigate(`/claims/${claim._id}`)}>
+                    <td className="py-4 px-6 text-slate-600 font-medium">{claim._id}</td>
+                    <td className="py-4 px-6 text-gray-800">{claim.userId}</td>
+                    <td className="py-4 px-6 text-gray-600">{claim.incident?.provider || 'N/A'}</td>
+                    <td className="py-4 px-6 text-gray-600">{new Date(claim.incident?.date).toLocaleDateString()}</td>
+                    <td className="py-4 px-6 text-gray-800 font-medium">
+                      {claim.incident?.amountClaimed?.toLocaleString('en-US', {
+                        style: 'currency',
+                        currency: 'USD'
+                      }) || '$0'}
+                    </td>
                     <td className="py-4 px-6">
                       <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium border ${getStatusColor(claim.status)}`}>
                         {claim.status}
                       </span>
                     </td>
-                    <td className="py-4 px-6 text-gray-600">{claim.type}</td>
+                    <td className="py-4 px-6 text-gray-600">{claim.incident?.type || 'N/A'}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
         </div>
+        </>
+      )}
       </main>
     </div>
   );

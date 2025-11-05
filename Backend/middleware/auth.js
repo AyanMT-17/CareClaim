@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 
-export function ensureAuth(req, res, next) {
+ function ensureAuth(req, res, next) {
   const { token } = req.cookies;
 
   if (!token) {
@@ -23,3 +23,5 @@ export function ensureAuth(req, res, next) {
     return res.status(401).json({ message: "Unauthorized: Invalid token" });
   }
 }
+
+export default ensureAuth;

@@ -6,6 +6,6 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   define: {
-    'import.meta.env.VITE_BACKEND_URL': JSON.stringify('http://localhost:5000')
+    'import.meta.env.VITE_BACKEND_URL': JSON.stringify(process.env.Frontend_URL)
   }
 })
