@@ -25,12 +25,10 @@ app.use(cookieParser());
 
 // Configure CORS
 app.use(cors({
-  origin: process.env.Frontend_URL, // Vite's default port
+  origin: ["https://care-claim-or49.vercel.app", "http://localhost:5173", process.env.Frontend_URL], // Hardcoded origins
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept']
 }));
 
 app.use(express.json());
