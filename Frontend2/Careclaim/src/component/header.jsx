@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { BarChart3, Plus, List, Shield, Settings, FileText } from 'lucide-react';
+import { BarChart3, Plus, List, Shield, Settings, FileText, LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 const Header = ({ currentPage }) => {
   const navigate = useNavigate();
@@ -21,6 +21,24 @@ const Header = ({ currentPage }) => {
     } catch (error) {
       console.log("Error fetching profile:", error);
       setUserdata(null);
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/auth/logout`, {
+        method: 'GET',
+        credentials: 'include'
+      });
+
+      if (response.ok) {
+        console.log('Logged out successfully');
+        navigate('/login');
+      } else {
+        console.error('Logout failed:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error during logout:', error);
     }
   };
 
@@ -71,22 +89,6 @@ const Header = ({ currentPage }) => {
             onClick={() => navigate('/policies')}>
               <Shield className="w-4 h-4" /><span>Policies</span>
             </button>
-            <button className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              currentPage === 'documents' 
-                ? 'text-slate-900 bg-slate-100' 
-                : 'text-gray-500 hover:text-gray-900 hover:bg-slate-100'
-            }`}
-            onClick={() => navigate('/documents')}>
-              <FileText className="w-4 h-4" /><span>Documents</span>
-            </button>
-            <button className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              currentPage === 'settings' 
-                ? 'text-slate-900 bg-slate-100' 
-                : 'text-gray-500 hover:text-gray-900 hover:bg-slate-100'
-            }`}
-            onClick={() => navigate('/settings')}>
-              <Settings className="w-4 h-4" /><span>Settings</span>
-            </button>
           </div>
         </div>
         <div className="flex items-center space-x-3">
@@ -98,6 +100,13 @@ const Header = ({ currentPage }) => {
           <span className="text-gray-800 hidden sm:inline font-medium">
             {userdata?.name || 'User'}
           </span>
+          <button
+            onClick={handleLogout}
+            className="flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors text-gray-500 hover:text-gray-900 hover:bg-slate-100"
+          >
+            <LogOut className="w-4 h-4" />
+            <span>Logout</span>
+          </button>
         </div>
       </div>
     </nav>

@@ -29,7 +29,7 @@ const LoginPage = ({ handleLogin }) => {
   // Define the base URL for your backend API
   // You should move this to a .env file for production
   const BACKEND_URL =`${import.meta.env.VITE_BACKEND_URL}`;
-
+  console.log('Backend URL:', BACKEND_URL);
   // Check if user is already authenticated when component mounts
   useEffect(() => {
     const checkAuthStatus = async () => {
