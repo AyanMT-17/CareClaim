@@ -28,7 +28,7 @@ router.get(
     res.cookie("token", token, {
       httpOnly: true,           // frontend can read if needed
       sameSite: "none",
-      secure: true,
+      secure: false,
       expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     });
 
